@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>系统设置</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/bootstrap-3.3.7-dist/css/bootstrap.css}" rel="stylesheet"/>
+
+    <!-- Custom styles -->
+    <link th:href="@{/css/default.css}" rel="stylesheet"/>
+
+    <!-- 时间脚本 -->
+    <script th:src="@{/js/common/auto-time.js}"></script>
+
+    <style>
+        .div-items p {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body class="body-bg main-body">
+
+<!-- 导航 -->
+<div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top" style="border: 0">
+        <div class="container-fluid navbar-bg">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" style="color: #ffffff" th:href="@{/login}">退出</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <div>
+                            <p class="navbar-p" th:text="${session.user.getUserName()} + ' ' + ${session.user.getUserPhone()}"></p>
+                            <span id="userId" th:text="${session.user.getUserId()}" style="display: none"></span>
+                            <p class="navbar-p">您好，欢迎使用本系统</p>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <p id="time" class="navbar-p"></p>
+                        <p class="navbar-p">云链接状态:已连线</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<!-- 主体 -->
+<div class="container-fluid" style="margin-left: 15px;margin-right: 15px">
+
+    <div class="row mb-15">
+        <div class="col-md-4 body-up" style="padding-left:15px;">
+            <div>
+                <p>当前断路器为：<span id="devId" th:text="${session.curDev.getDevId()}" style="display: none"></span>
+                    <span name="devName" th:text="${session.curDev.getDevName()}"></span></p>
+                <div class="row pre-scrollable table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>断路器名称</th>
+                            <th>站名</th>
+                            <th>线路名</th>
+                        </tr>
+                        </thead>
+                        <tbody th:each="dev: ${session.devs}">
+                        <tr>
+                            <td><input name="devRadio" type="radio"></td>
+                            <td th:text="${dev.getDevName()}"></td>
+                            <td th:text="${dev.getStationName()}"></td>
+                            <td th:text="${dev.getLineName()}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--
+            <div class="text-group">
+                <p class="text-p">国内 &nbsp; 湖南 &nbsp; 岳阳市 &nbsp; 平江县 &nbsp; 汉昌变 &nbsp; (220KV)</p>
+                <p class="text-p">汉南1回</p><br/>
+                <p class="text-p" style="text-align:center;">汉南1回</p>
+                <div>
+
+                </div>
+                <div style="text-align: center;margin-left:60px;">
+                    <p class="col-md-2 text-p">大<br/>道<br/>电<br/>气</p>
+                    <p class="col-md-2 text-p">大<br/>道<br/>电<br/>气</p>
+                    <p class="col-md-2 text-p">大<br/>道<br/>电<br/>气</p>
+                    <p class="col-md-2 text-p">大<br/>道<br/>电<br/>气</p>
+                    <p class="col-md-2 text-p">大<br/>道<br/>电<br/>气</p>
+                    <p class="col-md-2 text-p"></p>
+
+                </div>
+            </div>
+            -->
+        </div>
+
+        <div class="col-md-2 body-up" style="padding-left:15px;">
+            <div class="text-group">
+                <p><span name="devName" th:text="${session.curDev.getDevName()}"></span></p>
+                <div class="row">
+                    <div class="col-md-3 div-img">
+                        <img name="img"/>
+                    </div>
+                    <div class="col-md-9">
+                        <p class="text-p">电压  <span class="span-data" id="voltage"></span></p><br/>
+                        <p class="text-p">电流  <span class="span-data" id="current"></span></p><br/>
+                        <p class="text-p">功率  <span class="span-data" id="power"></span></p><br/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div id="yellowCircle" class="circle" style="background-color: yellow"></div><br/>
+                        <p class="text-p" style="margin-top:-10px">报警</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="redCircle" class="circle"></div><br/>
+                        <p class="text-p" style="margin-top:-10px">故障</p>
+                    </div>
+                </div>
+                <p id="communicationStatus" class="text-p">通信状态</p>
+            </div>
+            <!--
+            <div class="text-group">
+                <p class="text-p" style="color:white;font-size:18px">智能断路器</p>
+                <div>
+                    <div class="col-md-12" style="margin-top:10px">
+                        <p class="text-p ">断路器状态</p>
+                        <p class="text-p ">电流</p>
+                        <p class="text-p ">电压</p>
+                        <p class="text-p ">功率</p>
+                    </div>
+                    <div class="col-md-12" style="margin-top:10px">
+                        <p class="text-p">通讯状态:<span style="color:red">中断</span></p>
+                        <div>
+                            <p class="col-md-6 text-p">告罄</p>
+                            <div class="col-md-6 circle" style="background-color: white"></div>
+                        </div>
+                        <br/><br/>
+                        <div>
+                            <p class="col-md-6 text-p ">故障</p>
+                            <div class="col-md-6 circle" style="background-color: white"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            -->
+        </div>
+
+        <div name="telemeterItems" class="col-md-6 body-up div-items">
+            <div class="row">
+                <input type="submit" class="col-md-6 form-btn" id="devSetting" style="margin: 10px 30px 0 30px;" value="断路器设置"/>
+                <input type="submit" class="col-md-6 form-btn" id="ctrlSetting" style="margin: 10px 30px 0 30px;" value="控制器设置"/>
+            </div>
+            <div class="row">
+                <div class="col-md-9" style="border-right: 1px solid white">
+                    <div id="settingDevShow" style="margin-top:5px; border-top: 1px solid white">
+                        <p class="text-p" style="text-align: center">断路器设置</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">电容低压:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0406_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0406"></p>
+                                            <p class=" text-p" style="display:inline-block;color:white">V</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">电容过压:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0421_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0421"></p>
+                                            <p class="text-p" style="display:inline-block;color:white">V</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">PT低电压:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0429_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0429"></p>
+                                            <p class="text-p" style="display:inline-block;color:white">%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">PT过电压:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0430_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0430"></p>
+                                            <p class="text-p" style="display:inline-block;color:white">%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">PT1低电压:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0446_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0446"></p>
+                                            <p class="text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">PT1过电压:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0447_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0447"></p>
+                                            <p class="text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">PT2低电压:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0448_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0448"></p>
+                                            <p class="text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">PT2过电压:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0449_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0449"></p>
+                                            <p class="text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="padding: inherit;">
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">额定电流:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0401_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0401"></p>
+                                            <p class="text-p" style="display:inline-block;color:white">A</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">额定电压:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0402_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0402"></p>
+                                            <p class="text-p" style="display:inline-block;color:white">V</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">CT变比:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0403_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0403"></p>
+                                            <p class="text-p" style="display:inline-block;color:white">/5</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">PT变比:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0404_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0404"></p>
+                                            <p class="text-p" style="display:inline-block;color:white">/200</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">零序CT变比:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0405_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0405"></p>
+                                            <p class="text-p" style="display:inline-block;color:white">/20</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">电容Ucn:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0420_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0420"></p>
+                                            <p class="text-p" style="display:inline-block;color:white">DCV</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="settingCtrlShow" style="margin-top:5px; border-top: 1px solid white; display: none">
+                        <p class="text-p" style="text-align: center">控制器设置</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-7 text-p" style="display: inline-block;">年(Year):</p>
+                                        <div class="col-md-4" style="padding: inherit;">
+                                            <input name="integer" type="text" class="form-input" id="id_0455_m" style="width:50px; display:none;"/>
+                                            <p name="integer" class="form-text" id="id_0455"></p>
+                                            <p class=" text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-7 text-p" style="display: inline-block;">月(Month):</p>
+                                        <div class="col-md-4" style="padding: inherit;">
+                                            <input name="integer" type="text" class="form-input" id="id_0456_m" style="width:50px; display:none;"/>
+                                            <p name="integer" class="form-text" id="id_0456"></p>
+                                            <p class=" text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-7 text-p" style="display: inline-block;">日(Day):</p>
+                                        <div class="col-md-4" style="padding: inherit;">
+                                            <input name="integer" type="text" class="form-input" id="id_0457_m" style="width:50px; display:none;"/>
+                                            <p name="integer" class="form-text" id="id_0457"></p>
+                                            <p class=" text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-7 text-p" style="display: inline-block;">时(Hour):</p>
+                                        <div class="col-md-4" style="padding: inherit;">
+                                            <input name="integer" type="text" class="form-input" id="id_0459_m" style="width:50px; display:none;"/>
+                                            <p name="integer" class="form-text" id="id_0459"></p>
+                                            <p class=" text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-7 text-p" style="display: inline-block;">分(Minute):</p>
+                                        <div class="col-md-4" style="padding: inherit;">
+                                            <input name="integer" type="text" class="form-input" id="id_0460_m" style="width:50px; display:none;"/>
+                                            <p name="integer" class="form-text" id="id_0460"></p>
+                                            <p class=" text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-7 text-p" style="display: inline-block;">秒(Second):</p>
+                                        <div class="col-md-4" style="padding: inherit;">
+                                            <input name="integer" type="text" class="form-input" id="id_0461_m" style="width:50px; display:none;"/>
+                                            <p name="integer" class="form-text" id="id_0461"></p>
+                                            <p class=" text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-7 text-p" style="display: inline-block;">时标选择:</p>
+                                        <div class="col-md-4" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0454_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0454"></p>
+                                            <p class=" text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="padding: inherit;">
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">参数刷新:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0442_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0442"></p>
+                                            <p class="text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">录波选择:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0443_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0443"></p>
+                                            <p class="text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">Pulse_En:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0444_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0444"></p>
+                                            <p class="text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">保护出口:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0445_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0445"></p>
+                                            <p class="text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">STRelay:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0453_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0453"></p>
+                                            <p class="text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <p class="col-md-6 text-p" style="display: inline-block;">远程控制:</p>
+                                        <div class="col-md-6" style="padding: inherit;">
+                                            <input type="text" class="form-input" id="id_0441_m" style="width:50px; display:none;"/>
+                                            <p class="form-text" id="id_0441"></p>
+                                            <p class="text-p" style="display:inline-block;color:white"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <table>
+                        <tr>
+                            <td><input type="submit" class="form-btn-2" id="refresh" value="刷新"/></td>
+                        </tr>
+                        <tr>
+                            <td><input type="submit" class="form-btn-2" id="change" value="修改"/></td>
+                        </tr>
+                        <tr>
+                            <td><input type="submit" class="form-btn-2" id="solidify" value="固化"/></td>
+                        </tr>
+                    </table>
+                    <!--
+                    <div>
+                        <input type="submit" class="form-btn-2" id="refresh" value="刷新"/>
+                        <input type="submit" class="form-btn-2" id="change" value="修改"/>
+                        <input type="submit" class="form-btn-2" id="solidify" value="固化"/>
+                    </div>
+                    -->
+                </div>
+            </div>
+
+            <div id="hrefGroup" style="margin-top:10px">
+                <a th:href="@{/telemeter}"><button class="btn btn-default btn-css">遥测</button></a>
+                <a th:href="@{/communication}"><button class="btn btn-default btn-css">遥信</button></a>
+                <a th:href="@{/remote}"><button class="btn btn-default btn-css">遥控</button></a>
+                <a th:href="@{/protection}"><button class="btn btn-default btn-css">保护<br/>定值</button></a>
+                <a th:href="@{/fault-record}"><button class="btn btn-default btn-css">故障<br/>录波</button></a>
+                <a href="#"><button class="btn btn-default btn-active">系统<br/>设置</button></a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row mb-15">
+        <div class="col-md-3 body-down">
+            <h3 style="color:#2aabd2" class="col-md-12 ">巡检预警</h3>
+
+
+        </div>
+        <div class="col-md-3 body-down">
+            <h3 style="color:#2aabd2" class="col-md-12">保护动作</h3>
+
+        </div>
+        <div class="col-md-3 body-down">
+            <h3 style="color:#2aabd2" class="col-md-12">故障报警</h3>
+
+        </div>
+        <div class="col-md-3 body-down">
+            <h3 style="color:#2aabd2;margin-top:230px;text-align: center" class="col-md-12">新增加断路器</h3>
+
+        </div>
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; 2019 Company, Inc.</p>
+    </footer>
+
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="../static/bootstrap-3.3.7-dist/js/jquery.min.js" th:src="@{/bootstrap-3.3.7-dist/js/jquery.min.js}"></script>
+<script>window.jQuery || document.write('<script src="../static/bootstrap-3.3.7-dist/js/jquery.min.js"><\/script>')</script>
+<script src="../static/bootstrap-3.3.7-dist/js/bootstrap.min.js" th:src="@{/bootstrap-3.3.7-dist/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/common/dev-table.ctrl.js}"></script>
+<script th:src="@{/js/common/image-code.dao.js}"></script>
+<script th:src="@{/js/protection.ctrl.js}"></script>
+<script th:src="@{/js/setting.ctrl.js}"></script>
+</body>
+</html>

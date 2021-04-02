@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>注册成功</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/bootstrap-3.3.7-dist/css/bootstrap.css}" rel="stylesheet">
+    <!-- Custom styles -->
+    <link th:href="@{/css/default.css}" rel="stylesheet">
+    <link href="../static/css/signin.css" th:href="@{/css/signin.css}" rel="stylesheet">
+
+    <!-- 时间脚本 -->
+    <script th:src="@{/js/common/auto-time.js}"></script>
+</head>
+
+<body class="body-bg">
+
+<!-- 导航 -->
+<div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top" style="border: 0">
+        <div class="container-fluid navbar-bg">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" style="color: #ffffff" th:href="@{/login}">系统登录</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <p id="time" class="navbar-p"></p>
+                        <p class="navbar-p">云链接状态：已连线</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<!-- 主体 -->
+<div class="container">
+    <div style="padding: 25px; margin: 0 auto;">
+        <a th:href="@{/login}"><h3 style="text-align: center; text-decoration: underline; font-style:italic">注册成功！请点击此处跳转至登录页面！</h3></a>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="../static/bootstrap-3.3.7-dist/js/jquery.min.js" th:src="@{/bootstrap-3.3.7-dist/js/jquery.min.js}"></script>
+<script>window.jQuery || document.write('<script src="../static/bootstrap-3.3.7-dist/js/jquery.min.js"><\/script>')</script>
+<script src="../static/bootstrap-3.3.7-dist/js/bootstrap.min.js" th:src="@{/bootstrap-3.3.7-dist/js/bootstrap.min.js}"></script>
+</body>
+</html>

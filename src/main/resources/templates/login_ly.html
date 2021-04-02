@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>登录</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/bootstrap-3.3.7-dist/css/bootstrap.css}" rel="stylesheet"/>
+
+    <!-- Custom styles -->
+    <link th:href="@{/css/default.css}" rel="stylesheet"/>
+    <link href="../static/css/signin.css" th:href="@{/css/signin.css}" rel="stylesheet"/>
+    <style>
+        .body{
+        width:800px;
+        height:400px;
+        background-color: rgb(36,27,52);
+        color:#fff;
+        position: absolute;
+        left:50%;
+        top:15%;
+        transform: translate(-50%,0%);
+    }
+    .form_title{
+        color:rgb(104,152,183);
+    }
+    .form-input{
+        width:200px;
+        height:30px;
+        background-color: rgb(24,23,40);
+        border:1px solid rgb(24,23,40);
+        font-family: "微软雅黑";
+        font-size: 16px;
+    }
+    .form_alert{
+        font-family: "微软雅黑";
+        font-size: 16px;
+        color:#fff;
+        display: block;
+        width:200px;
+        margin-left: 10px;
+    }
+    .form-btn{
+        width:150px;
+        height:30px;
+        background-color: rgb(24,23,40);
+        border:1px solid rgb(24,23,40);
+        font-family: "微软雅黑";
+        font-size: 16px;
+        margin-top: 50px;
+        margin-left: 50px;
+    }
+    .form_p{
+        color:gray;
+        font-family: "微软雅黑";
+        font-size: 17px;
+    }
+    </style>
+</head>
+
+<body class="body-bg">
+
+<!-- 导航 -->
+<div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top" style="border: 0">
+        <div class="container-fluid navbar-bg">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" style="color: #ffffff" th:href="@{/login}">系统登录</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <p id="time" class="navbar-p"></p>
+                        <p class="navbar-p">云链接状态：已连线</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<!-- 主体 -->
+<div class="container">
+    <div class="body">
+        <form class="form-signin" action="/api/login" method="post">
+            <table width="100%" height="60%" align="center" bgcolor="#ffffff">
+                <tr>
+                    <h2 class="form_title">欢迎使用</h2>
+                </tr>
+                <br/><br/>
+                <tr>
+                    <td width="60%">
+                        <input type="text" id="inputUsername" name="userEnName" class="form-input" placeholder="请填写手机号" required autofocus>
+                    </td>
+                    <td width="40%"><div class="form_alert" id="username_msg">获取短信验证码</div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" id="inputPassword" name="userPsw" class="form-input" placeholder="请填写手机验证码" required>
+                    </td>
+                    <td><div class="form_alert" id="password_msg">请填写获取的短信验证码<br/>五分钟内有效</div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" id="inputalidation"name="userVal" class="form-input" placeholder="请填写右侧计算结果" required/>
+                    </td>
+                    <td><div class="form_alert" id="validation_msg">12+7</div></td>
+                </tr>
+                    <td colspan="3"><button class="form-btn" type="submit">注册&登录</button></td>
+            </table>
+            <br/><br/>
+            <p class="form_p">未注册手机验证后自动登录<br/>注册即代表同意《大道电气远程协议》<br/>
+        </form>
+
+    </div>
+</div>
+
+
+<!-- 自定义脚本 -->
+<!-- 时间脚本 -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function setTime(){
+        var dt=new Date();
+        var arr_week=new Array("星期日","星期一","星期二","星期三","星期四","星期五","星期六");
+        var strWeek=arr_week[dt.getDay()];
+        var strHour=dt.getHours();
+        var strMinutes=dt.getMinutes();
+        var strSeconds=dt.getSeconds();
+        if (strMinutes<10) strMinutes="0"+strMinutes;
+        if (strSeconds<10) strSeconds="0"+strSeconds;
+        var strYear=dt.getFullYear()+"年";
+        var strMonth=(dt.getMonth()+1)+"月";
+        var strDay=dt.getDate()+"日";
+        <!--var strTime=strHour+":"+strMinutes+":"+strSeconds;-->
+        strTime=strHour+":"+strMinutes;
+        time.innerHTML=strYear+strMonth+strDay+" "+strTime+"  "+strWeek;
+    }
+    setInterval("setTime()",1000);
+    /*]]>*/
+</script>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="../static/bootstrap-3.3.7-dist/js/jquery.min.js" th:src="@{/bootstrap-3.3.7-dist/js/jquery.min.js}"></script>
+<script>window.jQuery || document.write('<script src="../static/bootstrap-3.3.7-dist/js/jquery.min.js"><\/script>')</script>
+<script src="../static/bootstrap-3.3.7-dist/js/bootstrap.min.js" th:src="@{/bootstrap-3.3.7-dist/js/bootstrap.min.js}"></script>
+</body>
+</html>

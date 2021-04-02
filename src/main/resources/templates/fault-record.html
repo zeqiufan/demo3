@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>故障录波</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/bootstrap-3.3.7-dist/css/bootstrap.css}" rel="stylesheet">
+    <!-- Custom styles -->
+    <link th:href="@{/css/default.css}" rel="stylesheet">
+
+    <!-- 时间脚本 -->
+    <script th:src="@{/js/common/auto-time.js}"></script>
+</head>
+
+<body class="body-bg main-body">
+
+<!-- 导航 -->
+<div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top" style="border: 0">
+        <div class="container-fluid navbar-bg">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" style="color: #ffffff" th:href="@{/login}">退出</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <div>
+                            <p class="navbar-p" th:text="${session.user.getUserName()} + ' ' + ${session.user.getUserPhone()}"></p>
+                            <span id="userId" th:text="${session.user.getUserId()}" style="display: none"></span>
+                            <p class="navbar-p">您好，欢迎使用本系统</p>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <p id="time" class="navbar-p"></p>
+                        <p class="navbar-p">云链接状态：已连线</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<!-- 主体 -->
+<div class="container-fluid" style="margin-left: 15px;margin-right: 15px">
+
+    <div class="row mb-15">
+
+        <div class="col-md-4 body-up" style="padding-left:15px;">
+            <div>
+                <p>当前断路器为：<span id="devId" th:text="${session.curDev.getDevId()}" style="display: none"></span>
+                    <span name="devName" th:text="${session.curDev.getDevName()}"></span></p>
+                <div class="row pre-scrollable table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>断路器名称</th>
+                            <th>站名</th>
+                            <th>线路名</th>
+                        </tr>
+                        </thead>
+                        <tbody th:each="dev: ${session.devs}">
+                        <tr>
+                            <td><input name="devRadio" type="radio"></td>
+                            <td th:text="${dev.getDevName()}"></td>
+                            <td th:text="${dev.getStationName()}"></td>
+                            <td th:text="${dev.getLineName()}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--
+            <div class="text-group">
+                <p class="text-p">国内 &nbsp; 湖南 &nbsp; 岳阳市 &nbsp; 平江县 &nbsp; 汉昌变 &nbsp; (220KV)</p>
+                <p class="text-p">汉南1回</p><br/>
+                <p class="text-p" style="text-align:center;">汉南1回</p>
+                <div>
+
+                </div>
+                <div style="text-align: center;margin-left:60px;">
+                    <p class="col-md-2 text-p">大<br/>道<br/>电<br/>气</p>
+                    <p class="col-md-2 text-p">大<br/>道<br/>电<br/>气</p>
+                    <p class="col-md-2 text-p">大<br/>道<br/>电<br/>气</p>
+                    <p class="col-md-2 text-p">大<br/>道<br/>电<br/>气</p>
+                    <p class="col-md-2 text-p">大<br/>道<br/>电<br/>气</p>
+                    <p class="col-md-2 text-p"></p>
+
+                </div>
+            </div>
+            -->
+        </div>
+
+        <div class="col-md-2 body-up" style="padding-left:15px;">
+            <div class="text-group">
+                <p><span name="devName" th:text="${session.curDev.getDevName()}"></span></p>
+                <div class="row">
+                    <div class="col-md-3 div-img">
+                        <img name="img"/>
+                    </div>
+                    <div class="col-md-9">
+                        <p class="text-p">电压  <span class="span-data" id="voltage"></span></p><br/>
+                        <p class="text-p">电流  <span class="span-data" id="current"></span></p><br/>
+                        <p class="text-p">功率  <span class="span-data" id="power"></span></p><br/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div id="yellowCircle" class="circle" style="background-color: yellow"></div><br/>
+                        <p class="text-p" style="margin-top:-10px">报警</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="redCircle" class="circle"></div><br/>
+                        <p class="text-p" style="margin-top:-10px">故障</p>
+                    </div>
+                </div>
+                <p id="communicationStatus" class="text-p">通信状态</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 body-up">
+            <p style="color:white">故障录波</p>
+            <div class="btn_group" style="margin-top:273px;">
+                <a th:href="@{/telemeter}"><button class="btn btn-default btn-css">遥测</button></a>
+                <a th:href="@{/communication}"><button class="btn btn-default btn-css">遥信</button></a>
+                <a th:href="@{/remote}"><button class="btn btn-default btn-css">遥控</button></a>
+                <a th:href="@{/protection}"><button class="btn btn-default btn-css">保护<br/>定值</button></a>
+                <a href="#"><button class="btn btn-default btn-active">故障<br/>录波</button></a>
+                <a th:href="@{/setting}"><button class="btn btn-default btn-css">系统<br/>设置</button></a>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="row mb-15">
+        <div class="col-md-3 body-down">
+            <h3 style="color:#2aabd2" class="col-md-12 ">巡检预警</h3>
+
+
+        </div>
+        <div class="col-md-3 body-down">
+            <h3 style="color:#2aabd2" class="col-md-12">保护动作</h3>
+
+        </div>
+        <div class="col-md-3 body-down">
+            <h3 style="color:#2aabd2" class="col-md-12">故障报警</h3>
+
+        </div>
+        <div class="col-md-3 body-down">
+            <h3 style="color:#2aabd2;margin-top:230px;text-align: center" class="col-md-12">新增加断路器</h3>
+
+        </div>
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>&copy; 2019 Company, Inc.</p>
+    </footer>
+
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="../static/bootstrap-3.3.7-dist/js/jquery.min.js" th:src="@{/bootstrap-3.3.7-dist/js/jquery.min.js}"></script>
+<script>window.jQuery || document.write('<script src="../static/bootstrap-3.3.7-dist/js/jquery.min.js"><\/script>')</script>
+<script src="../static/bootstrap-3.3.7-dist/js/bootstrap.min.js" th:src="@{/bootstrap-3.3.7-dist/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/common/dev-table.ctrl.js}"></script>
+<script th:src="@{/js/common/image-code.dao.js}"></script>
+<script th:src="@{/js/remote.ctrl.js}"></script>
+</body>
+</html>
